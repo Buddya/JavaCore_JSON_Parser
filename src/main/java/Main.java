@@ -5,30 +5,30 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String fileName = "data.json";
         String json = readString(fileName);
+        System.out.println(json);
         List<Employee> employees = jsonToList(json);
         employees.forEach(System.out::println);
     }
 
-    private static String readString(String fileName) {
-        JSONParser parser = new JSONParser();
-        String json = null;
-        try {
-            Object obj = parser.parse(new FileReader(fileName));
-            JSONArray jsonArray = (JSONArray) obj;
-            json = jsonArray.toString();
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
+    private static String readString(String fileName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+            return stringBuilder.toString();
         }
-        return json;
     }
 
     private static List<Employee> jsonToList(String json) {
